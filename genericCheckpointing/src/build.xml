@@ -1,4 +1,4 @@
-<project name="fileVisitors" default="compile_all" basedir="..">
+<project name="genericCheckpointing" default="compile_all" basedir="..">
 
   <property name="BUILD.compiler"       value="modern"/>
   <property name="src"                  value="src"/>
@@ -17,7 +17,7 @@
   <target name="all" depends="compile_all"/>
 
   <target name="compile_all"
-          depends="fileVisitors"/>
+          depends="genericCheckpointing"/>
 
   <target name="clean">
        <delete dir="${BUILD}"/>
@@ -32,9 +32,9 @@
 
  <target name="jar">
         <mkdir dir="${BUILD}/jar"/>
-        <jar destfile="${BUILD}/jar/fileVisitors.jar" basedir="${BUILD}/classes">
+        <jar destfile="${BUILD}/jar/genericCheckpointing.jar" basedir="${BUILD}/classes">
             <manifest>
-                <attribute name="Main-Class" value="fileVisitors.driver.Driver"/>
+                <attribute name="Main-Class" value="genericCheckpointing.driver.Driver"/>
             </manifest>
         </jar>
   </target>
@@ -42,9 +42,9 @@
 <!--cp EDDITED HERE FOR TEST FILES --> 
  	<target name="testjar">
 		<mkdir dir ="${BUILD}/test"/>
-		<jar destfile="${BUILD}/test/fileVisitors.jar" basedir="${BUILD}/classes">
+		<jar destfile="${BUILD}/test/genericCheckpointing.jar" basedir="${BUILD}/classes">
 			<manifest>
-				<attribute name="Main-Class" value="fileVisitors.test.test"/>
+				<attribute name="Main-Class" value="genericCheckpointing.test.test"/>
 			</manifest>
 		</jar>
 	</target>
@@ -56,9 +56,9 @@
   <!-- * means all files in the current directory -->
   <!-- for just java files use *.java -->
 
-  <target name="fileVisitors" depends="prepare">
+  <target name="genericCheckpointing" depends="prepare">
     <javac srcdir="${src}"
-           includes="fileVisitors/**"
+           includes="genericCheckpointing/**"
            excludes="**/package.html"
            destdir="${classes}"
            classpath="${classes}"
@@ -69,14 +69,14 @@
 
 
 <target name="run" depends="jar">
-        <java jar="${BUILD}/jar/fileVisitors.jar"  fork="true">
+        <java jar="${BUILD}/jar/genericCheckpointing.jar"  fork="true">
 		<arg line="${args}"/>
         </java>
     </target>
 
 
 	<target name="test" depends="testjar">
-		<java jar="${BUILD}/test/fileVisitors.jar" fork="true">
+		<java jar="${BUILD}/test/genericCheckpointing.jar" fork="true">
 		<arg line="${args}"/>
         </java>
 	</target>
