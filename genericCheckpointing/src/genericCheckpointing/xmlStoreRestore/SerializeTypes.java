@@ -11,12 +11,16 @@ public class SerializeTypes{
 
 	public String field(Object obj, Field field) throws IllegalAccessException{
 		String retval = "";	
-		//try{
+		if(String.class.isAssignableFrom(field.getType())){
+			retval = "    <"+ field.getName() +" xsi:type=\"xsd:string\">"+field.get(obj)+"</"+field.getName()+">";
+		}
+		else if(field.getType().equals(boolean.class)){
+			retval = "    <"+ field.getName() +" xsi:type=\"xsd:boolean\">"+field.get(obj)+"</"+field.getName()+">";
+		}
+		else{
 			retval = "    <"+ field.getName() +" xsi:type=\"xsd:"+field.getType()+"\">"+field.get(obj)+"</"+field.getName()+">";
-		//}
-		//catch (IllegalAccessException e){
-
-		//}
+		}
+			
 		return retval;
 	}
 

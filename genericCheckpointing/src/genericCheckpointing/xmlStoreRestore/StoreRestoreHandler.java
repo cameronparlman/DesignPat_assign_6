@@ -31,7 +31,7 @@ public class StoreRestoreHandler implements InvocationHandler{
 		String meth = method.getName();
 
 		if(meth.equals("writeObj")){
-				System.out.println("write an object\n");
+				//System.out.println("write an object\n");
 				writeToFile(args[0]);		
 		}
 		if(meth.equals("readObj")){
@@ -55,7 +55,7 @@ public class StoreRestoreHandler implements InvocationHandler{
 	//write an object to the file 
 	public void writeToFile(Object obj){
 		SerializeTypes typer = new SerializeTypes();
-		System.out.println("WriteToFile\n");
+		//System.out.println("WriteToFile\n");
 		results.directWrite("<DPSerialization>");
 		String classstring = typer.serializeClass(obj);
 		results.directWrite(classstring);
@@ -75,7 +75,7 @@ public class StoreRestoreHandler implements InvocationHandler{
 			}
 		}
 		results.directWrite("  </complexType>");
-		results.directWrite("</DpSerialization>");
+		results.directWrite("</DPSerialization>");
 	}
 
 
@@ -106,34 +106,57 @@ public class StoreRestoreHandler implements InvocationHandler{
 	public Object readNextObject(){
 		Object retObj = null; 	
 		String line = null;	
+		Class<?> genclass = null;; 
 
+
+		try{
 		while( (line = fileprocessor.readLine()) != null){
 			if(line.equals("</DPSerialization>")){
+			//	System.out.println("BREAK:");
 				break;
 			}
 			else if(line.equals("  </complexType>")){
 			}
 			else if(line.startsWith("    ", 0)){
-				System.out.println("Field\n");
+		//		System.out.println("Field");
+			 	String field[] = parseField(line);
+				String fieldname = field[0];
+				String fieldtype = field[1];
+				String fieldval = field[2];
+		
+				setObjectFields(retObj, "set_"+ fieldname, fieldtype, fieldval);	
 			}
 			else if(line.startsWith("  ", 0)){
-				System.out.println("Complex Type\n");
+		//		System.out.println("Complex Type");
+				String [] data = line.split("\"");
+			//	for(String str : data){System.out.println("(" + str+ ")");}
+			//	System.out.println("OBJECT TYPE "+ data[1]);
+				genclass = Class.forName(data[1]);	
+				retObj = genclass.newInstance();
 			}
-			
-
-		
-
-
 		}
 
-
+		}catch(ClassNotFoundException e){
+			System.out.println("class not found");
+			System.exit(1);
+		}
+		catch(InstantiationException e){
+			System.out.println("Instantiationexception");
+			System.exit(1);
+		}
+		catch(IllegalAccessException e){
+			System.out.println("IllegalAccessException");
+			System.exit(1);
+		}
+			
+	//	System.out.println("RETURN AN OBJECT");
 		return retObj;
 	}
 
 
 	//open a file for write
 	public void openfileWrite(){
-		System.out.println("openfile to write " + filename + "\n");
+		//System.out.println("openfile to write " + filename + "\n");
 		results.openFileToWrite(filename);
 	}
 
@@ -141,6 +164,84 @@ public class StoreRestoreHandler implements InvocationHandler{
 	public void closefileWrite(){
 		results.closefileWrite();
 	}
+	
+   	 //<myInt xsi:type="xsd:int">314</myInt>
+	public String[] parseField(String line){
+		String data[] = line.split(":");
+		//get field name 
+		data = data[0].split("<");
+		data = data[1].split(" ");
+		String fieldname = data[0];
+		//get field type 
+		data = line.split(":");
+		data = data[2].split("\"");
+		String fieldtype = data[0];
+		//get field value 
+		data = line.split(">");
+		data = data[1].split("<");
+		String fieldval = data[0];
+		data = new String[]{fieldname, fieldtype, fieldval};
+		
+		//for(String str: data){
+		//	System.out.println("\t&"+str);
+		//}
+
+		return data;
+
+	}	
+	
+	//setObjectFields(retObj, "set_"+ fieldname, fieldtype, fieldval);	
+	public void setObjectFields(Object obj, String method, String fieldtype, String fieldval){
+		Method meth = null;	
+		Method m[] = obj.getClass().getDeclaredMethods(); 
+		//find the correct Method for objects declared methods by comparing methodname decalred names  
+		for(int i= 0 ; i < m.length; i++){
+			if(m[i].getName().equals(method)){
+				meth=m[i];
+				//System.out.println("FOUND MATCHING METHOD");
+				break;
+			}
+		}
+
+		Object parameter = new Object();
+		if(fieldtype.equals("int")){
+			parameter = new Integer(Integer.parseInt(fieldval));
+		}
+		else if(fieldtype.equals("long")){
+			parameter = new Long(Long.parseLong(fieldval));
+		}
+		else if(fieldtype.equals("string")){
+			parameter = new String(fieldval);
+		}
+		else if(fieldtype.equals("float")){
+			parameter = new Float(Float.parseFloat(fieldval));
+		}
+		else if(fieldtype.equals("double")){
+			parameter = new Double(Double.parseDouble(fieldval));
+		}
+		else if(fieldtype.equals("boolean")){
+			parameter = new Boolean(Boolean.parseBoolean(fieldval));
+		}
+		else if(fieldtype.equals("short")){
+			parameter = new Short(Short.parseShort(fieldval));
+		}
+		try{
+			meth.invoke(obj, parameter);
+		}
+		catch(IllegalAccessException e){
+			System.out.println("IllegalAccessException");
+			System.exit(1);	
+		}catch(IllegalArgumentException e){
+			System.out.println("IllegalArguemtnException:"+ parameter.toString());
+			System.exit(1);
+		}catch(InvocationTargetException e){
+			System.out.println("InvocationTargetException");
+			System.exit(1);
+		}
 		
 
+
+	}
+
 }
+

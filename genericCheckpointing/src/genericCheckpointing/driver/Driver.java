@@ -83,7 +83,7 @@ public class Driver {
 				//	constructor
 				// use the index variable of this loop to change the values of the arguments
 				//	to these constructors
-				myFirst = new MyAllTypesFirst(i);
+				myFirst = new MyAllTypesFirst(i, (long) i*2, "str:"+Integer.toString(i), i%2==0, (i+1));
 	//			mySecond = new MyAllTypesSecond(i);
 				//myFirst = new MyAllTypesFirst(rand.nextInt(50));
 		//		myFirst = new MyAllTypesFirst(...);
@@ -125,7 +125,8 @@ public class Driver {
 			SerializableObject objread;
 
 			for(int j = 0 ; j < NUM_OF_OBJECTS ; j++){
-				objread = ((RestoreI) cpointRef).readObj("XML");	
+				objread = (SerializableObject)((RestoreI) cpointRef).readObj("XML");	
+				System.out.println( objread);
 				list.add(objread);
 			}		
 			
