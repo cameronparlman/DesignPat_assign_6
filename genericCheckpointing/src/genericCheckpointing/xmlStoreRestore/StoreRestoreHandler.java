@@ -34,6 +34,16 @@ public class StoreRestoreHandler implements InvocationHandler{
 				System.out.println("write an object\n");
 				writeToFile(args[0]);		
 		}
+		if(meth.equals("readObj")){
+			if(args[0].equals("XML")){
+				//readBehavior = xmlreadBehavior
+				retObject = readNextObject();				
+			}
+			else if(args[0].equals("JSON")){
+				//readBehavior = jsonreadBehavior 
+			}
+
+		}
 
 
 
@@ -73,12 +83,52 @@ public class StoreRestoreHandler implements InvocationHandler{
 	//set the file name 
 	public void setfile(String filename){
 		this.filename = filename;
-		System.out.println("Set filename to "+ filename+"\n");
+	//	System.out.println("Set filename to "+ filename+"\n");
 	} 
 
 
 	//open a file for read with fileprocessor 
 	public void openfileRead(){fileprocessor= new FileProcessor(filename);}
+
+/*
+	<DPSerialization>
+	  <complexType xsi:type="genericCheckpointing.util.MyAllTypesFirst">
+   	    <myInt xsi:type="xsd:int">314</myInt>
+ 	    <myLong xsi:type="xsd:long">314159</myLong>
+   	    <myString xsi:type="xsd:string">Design Patterns</myString>
+	    <myBool xsi:type="xsd:boolean">false</myBool>
+	    <myOtherInt xsi:type="xsd:int">314</myOtherInt>
+	    </complexType>
+	</DPSerialization>
+*/
+
+
+	public Object readNextObject(){
+		Object retObj = null; 	
+		String line = null;	
+
+		while( (line = fileprocessor.readLine()) != null){
+			if(line.equals("</DPSerialization>")){
+				break;
+			}
+			else if(line.equals("  </complexType>")){
+			}
+			else if(line.startsWith("    ", 0)){
+				System.out.println("Field\n");
+			}
+			else if(line.startsWith("  ", 0)){
+				System.out.println("Complex Type\n");
+			}
+			
+
+		
+
+
+		}
+
+
+		return retObj;
+	}
 
 
 	//open a file for write

@@ -122,10 +122,15 @@ public class Driver {
 		else if(mode.equals("deser")){
 			((StoreRestoreHandler)invHandler).openfileRead();
 			ArrayList<SerializableObject> list = new ArrayList<SerializableObject>();	
+			SerializableObject objread;
+
+			for(int j = 0 ; j < NUM_OF_OBJECTS ; j++){
+				objread = ((RestoreI) cpointRef).readObj("XML");	
+				list.add(objread);
+			}		
 			
 			
-			
-			
+				
 		}
 	}//end main
 }//end Driver 

@@ -51,7 +51,7 @@ public class FileProcessor{
 			//return scanner.nextInt();
 			return scanner.nextLine();
 		}	
-		return "";
+		return null;
 	}
 	public void close(){
 		scanner.close();

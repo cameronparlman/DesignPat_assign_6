@@ -16,7 +16,10 @@ public class MyAllTypesFirst extends SerializableObject{
 	//setters
 	public void set_myInt(int i){myInt = i;}
 	
-
+	@Override 
+	public String toString(){
+		return "MyAllTypesFirst " + myInt;
+	}
 
 
 }

@@ -70,12 +70,15 @@ public class Results implements FileDisplayInterface, StdoutDisplayInterface{
 		printwriter.close();
 	}
 
+
 	//write all of results stored to file at once. 
 	public void write(){
 		for(String str: results){
 			printwriter.println(str);
 		}
 	}
+
+
 	//write directly to file via printwriter 
 	public void directWrite(String str){
 		printwriter.println(str);
