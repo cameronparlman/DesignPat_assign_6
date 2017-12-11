@@ -19,7 +19,7 @@ public class Driver {
 	public static void main(String[] args) {
 		int NUM_OF_OBJECTS = 0;
 
-		// FIXME: read the value of checkpointFile from the command line
+		//  read the value of checkpointFile from the command line
 		 String checkpointFile = "";
 		 String mode = ""; 
 		try{
@@ -38,7 +38,7 @@ public class Driver {
 			System.exit(1);
 		}
 
-		System.out.println(mode + ", " + NUM_OF_OBJECTS +" " + checkpointFile + "\n"); 
+		//System.out.println(mode + ", " + NUM_OF_OBJECTS +" " + checkpointFile + "\n"); 
 
 
 		ProxyCreator pc = new ProxyCreator();
@@ -75,26 +75,28 @@ public class Driver {
 		Random rand = new Random();
 		if(mode.equals("serdeser")){ //do both serialize and deserialize 
 			((StoreRestoreHandler)invHandler).openfileWrite();
-			ArrayList<SerializableObject> myObjects = new ArrayList<SerializableObject>(); 
+			ArrayList<SerializableObject> firstOut = new ArrayList<SerializableObject>(); 
+			ArrayList<SerializableObject> secondOut = new ArrayList<SerializableObject>(); 
 
 			for (int i=0; i<NUM_OF_OBJECTS; i++) {
 
-				// FIXME: create these object instances correctly using an explicit value
+				//  create these object instances correctly using an explicit value
 				//	constructor
 				// use the index variable of this loop to change the values of the arguments
 				//	to these constructors
-				myFirst = new MyAllTypesFirst(i, (long) i*2, "str:"+Integer.toString(i), i%2==0, (i+1));
-	//			mySecond = new MyAllTypesSecond(i);
+				myFirst = new MyAllTypesFirst(rand.nextInt(), rand.nextLong(), "str:"+Integer.toString(i), i%2==0, rand.nextInt());
+				mySecond = new MyAllTypesSecond(rand.nextFloat(), rand.nextDouble(), (new Integer(i*10)).shortValue(), (char)('A'+i), rand.nextDouble());
 				//myFirst = new MyAllTypesFirst(rand.nextInt(50));
 		//		myFirst = new MyAllTypesFirst(...);
 		//		mySecond = new MyAllTypesSecond(..);
 
-				// FIXME: store myFirst and mySecond in the data structure
-				myObjects.add(myFirst);
+				//  store myFirst and mySecond in the data structure
+				firstOut.add(myFirst);
+				secondOut.add(mySecond);
 
 
 				((StoreI) cpointRef).writeObj(myFirst,1, "XML");
-		//		((StoreI) cpointRef).writeObj(mySecond, "XML");
+				((StoreI) cpointRef).writeObj(mySecond,1, "XML");
 
 			}
 			((StoreRestoreHandler)invHandler).closefileWrite();
@@ -103,17 +105,31 @@ public class Driver {
 			SerializableObject myRecordRet;
 
 			// create a data structure to store the returned ojects
+
+			ArrayList<SerializableObject> firstIn = new ArrayList<SerializableObject>();
+			ArrayList<SerializableObject> secondIn = new ArrayList<SerializableObject>();
+			((StoreRestoreHandler)invHandler).openfileRead();
 			for (int j=0; j<2*NUM_OF_OBJECTS; j++) {
-
-		//		myRecordRet = ((RestoreI) cpointRef).readObj("XML");
-				// FIXME: store myRecordRet in the vector
+				myRecordRet = (SerializableObject)((RestoreI) cpointRef).readObj("XML");
+				if(j%2==0){firstIn.add(myRecordRet);}
+				else{secondIn.add(myRecordRet);}
 			}
+			((StoreRestoreHandler)invHandler).closefileRead();
 
-			// FIXME: invoke a method on the handler to close the file 
-			//(if it hasn't already been closed)
-
-			// FIXME: compare and confirm that the serialized and deserialzed 
+			//  compare and confirm that the serialized and deserialzed 
 			//objects are equal. 
+
+			
+			int incorrect=0; 		
+			for(int i = 0 ; i < NUM_OF_OBJECTS;i++){
+				if(! firstOut.get(i).equals(firstIn.get(i))) { incorrect++;}
+				if(! secondOut.get(i).equals(secondIn.get(i))){ incorrect++;}
+			}	
+			
+	
+			System.out.println("the number of incorrect : " + incorrect);
+			System.out.println(2*NUM_OF_OBJECTS-incorrect + " Are matching");
+
 
 			// The comparison should use the equals and hashCode methods. Note that hashCode 
 			// is used for key-value based data structures
@@ -126,7 +142,7 @@ public class Driver {
 
 			for(int j = 0 ; j < NUM_OF_OBJECTS ; j++){
 				objread = (SerializableObject)((RestoreI) cpointRef).readObj("XML");	
-				System.out.println( objread);
+				System.out.println( objread + "\n");
 				list.add(objread);
 			}		
 			
@@ -134,6 +150,8 @@ public class Driver {
 				
 		}
 	}//end main
+
 }//end Driver 
+
 
 

@@ -18,7 +18,8 @@ public class SerializeTypes{
 			retval = "    <"+ field.getName() +" xsi:type=\"xsd:boolean\">"+field.get(obj)+"</"+field.getName()+">";
 		}
 		else{
-			retval = "    <"+ field.getName() +" xsi:type=\"xsd:"+field.getType()+"\">"+field.get(obj)+"</"+field.getName()+">";
+		
+				retval = "    <"+ field.getName() +" xsi:type=\"xsd:"+field.getType()+"\">"+field.get(obj)+"</"+field.getName()+">";
 		}
 			
 		return retval;

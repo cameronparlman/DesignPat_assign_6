@@ -1,4 +1,5 @@
 package genericCheckpointing.util;
+import java.util.Objects;
 
 public class MyAllTypesFirst extends SerializableObject{
 	private int 	myInt;
@@ -45,5 +46,26 @@ public class MyAllTypesFirst extends SerializableObject{
 			+"myBool:"+myBool+"\n\tmyOtherInt:"+myOtherInt;
 	}
 
+	@Override 
+	public boolean equals(Object other){
+		if(other instanceof MyAllTypesFirst){
+		/*		if(this.myInt == ((MyAllTypesFirst)other).get_myInt() &&
+					this.myLong  == ((MyAllTypesFirst)other).get_myLong() && 
+					this.myString.equals( ((MyAllTypesFirst)other).get_myString()) &&
+					this.myBool == ((MyAllTypesFirst)other).get_myBool() &&
+					this.myOtherInt == ((MyAllTypesFirst)other).get_myOtherInt())
+			{
+				return true;
+			}
+		*/
+		if(this.hashCode() == ((MyAllTypesFirst)other).hashCode()){return true;}
+		}else{ return false;}
+		return false;
+	}
+	@Override 
+	public int hashCode(){
+		return Objects.hash(myInt, myLong, myString, myBool, myOtherInt); 
+		//return 41*myInt + 17*myLong + 97*myString.hashCode() + 149*((myBool) ? 1 : 3) + myOtherInt * 73;
+	}
 
 }

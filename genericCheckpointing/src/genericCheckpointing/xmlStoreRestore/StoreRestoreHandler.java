@@ -65,7 +65,7 @@ public class StoreRestoreHandler implements InvocationHandler{
 			try{
 				fields[i].setAccessible(true);
 				String fieldstring = typer.field(obj, fields[i]);
-				results.directWrite(fieldstring);
+					results.directWrite(fieldstring);
 			} catch(IllegalArgumentException e){
 				System.out.println("Illegal Argument passed\n");
 				System.exit(1);
@@ -123,6 +123,7 @@ public class StoreRestoreHandler implements InvocationHandler{
 				String fieldname = field[0];
 				String fieldtype = field[1];
 				String fieldval = field[2];
+				//System.out.println("fieldname:" + fieldname + "\tfieldtype:" + fieldtype + "  val:"+ fieldval);
 		
 				setObjectFields(retObj, "set_"+ fieldname, fieldtype, fieldval);	
 			}
@@ -134,6 +135,7 @@ public class StoreRestoreHandler implements InvocationHandler{
 				genclass = Class.forName(data[1]);	
 				retObj = genclass.newInstance();
 			}
+
 		}
 
 		}catch(ClassNotFoundException e){
@@ -163,6 +165,9 @@ public class StoreRestoreHandler implements InvocationHandler{
 	//close the file 
 	public void closefileWrite(){
 		results.closefileWrite();
+	}
+	public void closefileRead(){
+		fileprocessor.close();
 	}
 	
    	 //<myInt xsi:type="xsd:int">314</myInt>
@@ -225,6 +230,11 @@ public class StoreRestoreHandler implements InvocationHandler{
 		else if(fieldtype.equals("short")){
 			parameter = new Short(Short.parseShort(fieldval));
 		}
+		else if(fieldtype.equals("char")){
+			parameter = new Character(fieldval.charAt(0));
+		}
+		else{
+		}
 		try{
 			meth.invoke(obj, parameter);
 		}
@@ -232,7 +242,7 @@ public class StoreRestoreHandler implements InvocationHandler{
 			System.out.println("IllegalAccessException");
 			System.exit(1);	
 		}catch(IllegalArgumentException e){
-			System.out.println("IllegalArguemtnException:"+ parameter.toString());
+			System.out.println(e+" "+ parameter.toString());
 			System.exit(1);
 		}catch(InvocationTargetException e){
 			System.out.println("InvocationTargetException");
