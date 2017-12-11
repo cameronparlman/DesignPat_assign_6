@@ -1,12 +1,14 @@
 package genericCheckpointing.util;
 
-public class MyAllTypesFirst {
+public class MyAllTypesFirst extends SerializableObject{
 	private int 	myInt;
 	//private long 	myLong;
 	//private String 	myString;	
 	//private Bool	myBool;	
 	//private int 	myOtherInt;
 
+	
+	public MyAllTypesFirst(int myint){myInt = myint;}	
 
 	//getters
 	public int get_myInt(){return myInt;}

@@ -1,4 +1,4 @@
-package studentCoursesBackup.util;
+package genericCheckpointing.util;
 
 /**
 StdoutDisplayInterface
